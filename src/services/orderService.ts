@@ -21,6 +21,12 @@ interface IdempotencyRecord {
 
 const idempotencyStore = createAsyncStore<IdempotencyRecord>((r) => r.key);
 
+/**
+ * Price the cart (applying a coupon if present), reserve stock for each
+ * line, roll back any already-reserved lines if a later line fails, and
+ * persist the resulting order. Has no idempotency handling of its own —
+ * that's layered on by the `checkout` wrapper below.
+ */
 async function doCheckout(input: CheckoutInput): Promise<Order> {
   // 1) Resolve the coupon (unknown / missing code -> no discount).
   const coupon = input.couponCode ? (await couponRepo.get(input.couponCode)) ?? null : null;

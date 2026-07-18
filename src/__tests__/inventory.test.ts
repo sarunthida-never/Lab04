@@ -26,6 +26,14 @@ describe('inventoryService', () => {
     await expect(reserve('NOPE', 1)).rejects.toThrow(/unknown sku/);
   });
 
+  it('release throws for an unknown sku', async () => {
+    await expect(release('NOPE', 1)).rejects.toThrow(/unknown sku/);
+  });
+
+  it('available is 0 for an unknown sku', async () => {
+    expect(await available('NOPE')).toBe(0);
+  });
+
   it('CONCURRENCY: two racing reserves of the last unit -> exactly one succeeds', async () => {
     await productRepo.seed([{ sku: 'X', name: 'X', priceCents: 100, stock: 1 }]);
     const results = await Promise.all([reserve('X', 1), reserve('X', 1)]);

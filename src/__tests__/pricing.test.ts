@@ -21,6 +21,10 @@ describe('pricingService', () => {
     await expect(computeSubtotal([{ sku: 'BOOK', quantity: 0 }])).rejects.toThrow(/positive/);
   });
 
+  it('rejects an unknown sku', async () => {
+    await expect(computeSubtotal([{ sku: 'NOPE', quantity: 1 }])).rejects.toThrow(/unknown sku/);
+  });
+
   it('taxes at 7%', () => {
     expect(taxOf(3750)).toBe(263); // 262.5 -> 263
   });
