@@ -21,6 +21,24 @@ describe('auth HTTP routes', () => {
     expect(res.body).toEqual({ error: 'invalid credentials' });
   });
 
+  it('POST /auth/login with an empty body returns 401', async () => {
+    const res = await request(app).post('/auth/login').send({});
+    expect(res.status).toBe(401);
+    expect(res.body).toEqual({ error: 'invalid credentials' });
+  });
+
+  it('POST /auth/login with a missing password returns 401', async () => {
+    const res = await request(app).post('/auth/login').send({ username: 'admin' });
+    expect(res.status).toBe(401);
+    expect(res.body).toEqual({ error: 'invalid credentials' });
+  });
+
+  it('POST /auth/login with a null password returns 401', async () => {
+    const res = await request(app).post('/auth/login').send({ username: 'admin', password: null });
+    expect(res.status).toBe(401);
+    expect(res.body).toEqual({ error: 'invalid credentials' });
+  });
+
   it('POST /orders/checkout without a token returns 401', async () => {
     const res = await request(app)
       .post('/orders/checkout')

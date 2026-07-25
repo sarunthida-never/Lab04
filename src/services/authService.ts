@@ -4,9 +4,15 @@ import { userRepo } from '../repositories/userRepo';
 import { sessionRepo } from '../repositories/sessionRepo';
 import { AuthError } from '../lib/errors';
 
-const DUMMY_HASH = bcrypt.hashSync('dummy-password-for-timing-safety', 10);
+export const BCRYPT_COST = 10;
+
+const DUMMY_HASH = bcrypt.hashSync('dummy-password-for-timing-safety', BCRYPT_COST);
 
 export async function login(username: string, password: string): Promise<string> {
+  if (typeof username !== 'string' || typeof password !== 'string') {
+    throw new AuthError('invalid credentials');
+  }
+
   const user = await userRepo.get(username);
   const ok = await bcrypt.compare(password, user?.passwordHash ?? DUMMY_HASH);
   if (!user || !ok) throw new AuthError('invalid credentials');

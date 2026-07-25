@@ -3,6 +3,7 @@ import bcrypt from 'bcryptjs';
 import { productRouter } from './routes/productRoutes';
 import { orderRouter } from './routes/orderRoutes';
 import { authRouter } from './routes/authRoutes';
+import { BCRYPT_COST } from './services/authService';
 import { errorHandler } from './middleware/errorHandler';
 import { requireAuth } from './middleware/requireAuth';
 import { productRepo } from './repositories/productRepo';
@@ -25,7 +26,7 @@ export async function createApp(): Promise<Express> {
     { code: 'EXPIRED', type: 'percent', value: 50, minSubtotalCents: 0, expiresAt: '2020-01-01T00:00:00.000Z' },
   ]);
 
-  await userRepo.seed([{ username: 'admin', passwordHash: bcrypt.hashSync('password123', 10) }]);
+  await userRepo.seed([{ username: 'admin', passwordHash: bcrypt.hashSync('password123', BCRYPT_COST) }]);
 
   app.get('/health', (_req, res) => res.json({ status: 'ok' }));
   app.use('/auth', authRouter);
