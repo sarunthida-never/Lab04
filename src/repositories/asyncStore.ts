@@ -20,6 +20,10 @@ export function createAsyncStore<T>(key: (item: T) => string) {
       map.set(key(item), item);
       return item;
     },
+    async delete(id: string): Promise<void> {
+      await tick();
+      map.delete(id);
+    },
     async all(): Promise<T[]> {
       await tick();
       return Array.from(map.values());
