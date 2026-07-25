@@ -1,9 +1,13 @@
 import express, { Express } from 'express';
+import bcrypt from 'bcryptjs';
 import { productRouter } from './routes/productRoutes';
 import { orderRouter } from './routes/orderRoutes';
+import { authRouter } from './routes/authRoutes';
 import { errorHandler } from './middleware/errorHandler';
+import { requireAuth } from './middleware/requireAuth';
 import { productRepo } from './repositories/productRepo';
 import { couponRepo } from './repositories/couponRepo';
+import { userRepo } from './repositories/userRepo';
 
 export async function createApp(): Promise<Express> {
   const app = express();
@@ -21,9 +25,12 @@ export async function createApp(): Promise<Express> {
     { code: 'EXPIRED', type: 'percent', value: 50, minSubtotalCents: 0, expiresAt: '2020-01-01T00:00:00.000Z' },
   ]);
 
+  await userRepo.seed([{ username: 'admin', passwordHash: bcrypt.hashSync('password123', 10) }]);
+
   app.get('/health', (_req, res) => res.json({ status: 'ok' }));
+  app.use('/auth', authRouter);
   app.use('/products', productRouter);
-  app.use('/orders', orderRouter);
+  app.use('/orders', requireAuth, orderRouter);
 
   app.use(errorHandler);
   return app;
