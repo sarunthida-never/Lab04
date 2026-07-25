@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+# PostToolUse (matcher: Edit|Write) — format ไฟล์ที่เพิ่งถูกแก้
+# Claude ส่งรายละเอียด event เป็น JSON ทาง stdin
+file=$(jq -r '.tool_input.file_path // empty')
+[ -z "$file" ] && exit 0
+case "$file" in
+  *.ts|*.js|*.json) npx prettier --write "$file" >/dev/null 2>&1 ;;
+esac
+exit 0
