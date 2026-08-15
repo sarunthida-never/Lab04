@@ -54,7 +54,7 @@ jobs:
 
       - name: บล็อกเมื่อเจอ HIGH หรือ CRITICAL
         run: |
-          if grep -qE '^(HIGH|CRITICAL)' /tmp/security.md; then
+          if grep -qE '^[[:space:]#>*-]*(HIGH|CRITICAL)\b' /tmp/security.md; then
             echo "::error::security review พบช่องโหว่ระดับ HIGH ขึ้นไป — merge ไม่ได้"
             exit 1
           fi
