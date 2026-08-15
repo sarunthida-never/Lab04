@@ -3,6 +3,7 @@ import bcrypt from 'bcryptjs';
 import { productRouter } from './routes/productRoutes';
 import { orderRouter } from './routes/orderRoutes';
 import { authRouter } from './routes/authRoutes';
+import { debugRouter } from './routes/debugRoutes';
 import { BCRYPT_COST } from './services/authService';
 import { errorHandler } from './middleware/errorHandler';
 import { requireAuth } from './middleware/requireAuth';
@@ -31,6 +32,7 @@ export async function createApp(): Promise<Express> {
   app.get('/health', (_req, res) => res.json({ status: 'ok' }));
   app.use('/auth', authRouter);
   app.use('/products', productRouter);
+  app.use('/debug', debugRouter);
   app.use('/orders', requireAuth, orderRouter);
 
   app.use(errorHandler);

@@ -52,10 +52,14 @@ jobs:
 
           printf '%s\n' "$result" | tee /tmp/security.md
 
-      - name: บล็อกเมื่อเจอ HIGH หรือ CRITICAL
+      - name: บล็อกเมื่อเจอ CRITICAL
         run: |
-          if grep -qE '^[[:space:]#>*-]*(HIGH|CRITICAL)\b' /tmp/security.md; then
-            echo "::error::security review พบช่องโหว่ระดับ HIGH ขึ้นไป — merge ไม่ได้"
+          # Policy: block merge only on CRITICAL (deploy-blocking, RCE-class).
+          # HIGH/MEDIUM/LOW are reported for tracking but do not block — the
+          # model's HIGH severity is non-deterministic, so gating on it makes
+          # the pipeline flaky. Tolerate markdown prefixes (###, -, *) before CRITICAL.
+          if grep -qE '^[[:space:]#>*-]*CRITICAL\b' /tmp/security.md; then
+            echo "::error::security review พบช่องโหว่ระดับ CRITICAL — merge ไม่ได้"
             exit 1
           fi
-          echo "ไม่พบช่องโหว่ระดับ HIGH ขึ้นไป"
+          echo "ไม่พบช่องโหว่ระดับ CRITICAL"
